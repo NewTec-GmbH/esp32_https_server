@@ -263,11 +263,35 @@ size_t HTTPConnection::pendingByteCount() {
 }
 
 size_t HTTPConnection::writeBuffer(byte* buffer, size_t length) {
-  return send(_socket, buffer, length, 0);
+  size_t written  = 0;
+
+  if (_socket >= 0)
+  {
+    int socketSendRet = send(_socket, buffer, length, 0);
+
+    if (0 < socketSendRet)
+    {
+      written = socketSendRet;
+    }
+  }
+
+  return written;
 }
 
 size_t HTTPConnection::readBytesToBuffer(byte* buffer, size_t length) {
-  return recv(_socket, buffer, length, MSG_WAITALL | MSG_DONTWAIT);
+  size_t read = 0;
+
+  if (_socket >= 0)
+  {
+    int socketRecvRet = recv(_socket, buffer, length, MSG_WAITALL | MSG_DONTWAIT);
+
+    if (0 < socketRecvRet)
+    {
+      read = socketRecvRet;
+    }
+  }
+
+  return read;
 }
 
 void HTTPConnection::raiseError(uint16_t code, std::string reason) {
